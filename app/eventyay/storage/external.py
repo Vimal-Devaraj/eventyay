@@ -72,6 +72,7 @@ def retrieve_url(url):
         return None
     if response.status_code == 200:
         return response
+    logger.warning("Failed to retrieve URL %s: HTTP status code %s", url, response.status_code)
     return None
 
 
