@@ -65,7 +65,10 @@ def store_image(response, event):  # TODO deduplicate
 
 
 def _safe_url(url):
-    host = urlsplit(url).hostname
+    try:
+        host = urlsplit(url).hostname
+    except ValueError:
+        return "<unparseable url>"
     return host or "<unparseable url>"
 
 
