@@ -1,6 +1,7 @@
 import logging
 import mimetypes
 import uuid
+from urllib.parse import urlsplit
 
 import requests
 from bs4 import BeautifulSoup
@@ -63,16 +64,21 @@ def store_image(response, event):  # TODO deduplicate
     return stored_file.file.url
 
 
+def _safe_url(url):
+    host = urlsplit(url).hostname
+    return host or "<unparseable url>"
+
+
 def retrieve_url(url):
     headers = {"User-Agent": f"{settings.INSTANCE_NAME}/1.0 ({settings.SITE_URL})"}
     try:
         response = requests.get(url, timeout=10, headers=headers)
     except requests.RequestException as e:
-        logger.warning("Failed to retrieve URL %s: %s", url, e)
+        logger.warning("Failed to retrieve URL %s: %s", _safe_url(url), type(e).__name__)
         return None
-    if response.status_code == 200:
+    if 200 <= response.status_code < 300:
         return response
-    logger.warning("Failed to retrieve URL %s: HTTP status code %s", url, response.status_code)
+    logger.warning("Failed to retrieve URL from %s: HTTP %s", _safe_url(url), response.status_code)
     return None
 
 
