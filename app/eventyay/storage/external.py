@@ -11,6 +11,7 @@ from django.core.files.base import ContentFile
 from django.utils.timezone import now
 
 from eventyay.base.models.storage_model import StoredFile
+from eventyay.base.operational_logging import OUTCOME_FAILURE, log_event
 from eventyay.consts import SizeKey
 
 
